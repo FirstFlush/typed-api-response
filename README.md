@@ -18,23 +18,29 @@ This library provides a type-safe, extensible, and strictly validated system for
 ### Define your Pydantic response schema:
 
 ```python
+from pydantic import BaseModel
+from typing import Any
+
 class PredictionResponse(BaseModel):
     entities: list[dict[str, Any]]
 ```
 
 
-### Call the builder:
+### Return a structured API response using the builder:
 
 ```python
-from response_toolkit import build_api_response
-
-@router.post("/foo")
-def foo(data: FooData):
-    result = some_model.do_something(data)
+@router.post("/foo", response_model=PredictionResponse)
+def foo():
+    result = PredictionResponse(entities=[{"label": "RESOURCE", "value": "food"}])
     return build_api_response(data=result, status=200)
 ```
 
-Or return an error:
+✅ build_api_response() accepts any Pydantic model or well-typed object and wraps it into a fully structured, metadata-rich response — with full type hint propagation and IDE support via generics.
+
+
+### Handling errors just as cleanly
+
+You can also return exceptions using the same unified response format:
 
 ```python
 try:
@@ -42,6 +48,8 @@ try:
 except Exception as e:
     return build_api_response(error=e, status=418)
 ```
+
+✅ build_api_response() wraps the exception in a type-safe, structured error payload — so your failure responses stay as consistent and predictable as your success ones.
 
 
 ## 🧱 API Structure
