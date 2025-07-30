@@ -1,0 +1,49 @@
+# Mine
+typed-api-response/dev/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Test and coverage artifacts
+.coverage
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+.cache/
+
+# MyPy / Pylance / static type checkers
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pyright/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+
+# Logs and local config
+*.log
+*.local
+*.env
+
+# Editor / IDE settings
+.vscode/
+.idea/
+*.swp
+
+# Mac / Linux / Windows junk
+.DS_Store
+Thumbs.db
