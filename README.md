@@ -31,8 +31,8 @@ class PredictionResponse(BaseModel):
 ```python
 @router.post("/foo", response_model=PredictionResponse)
 def foo():
-    result = PredictionResponse(entities=[{"label": "RESOURCE", "value": "food"}])
-    return build_api_response(data=result, status=200)
+    your_data = PredictionResponse(entities=[{"label": "RESOURCE", "value": "food"}])
+    return build_api_response(data=your_data, status=200)
 ```
 
 ✅ build_api_response() accepts any Pydantic model or well-typed object and wraps it into a fully structured, metadata-rich response — with full type hint propagation and IDE support via generics.
