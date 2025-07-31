@@ -31,14 +31,16 @@ class ApiResponseBuilder(ABC, Generic[P]):
     Type Parameters:
         P: A concrete subclass of `Payload` (e.g. `SuccessPayload[T]` or `ErrorPayload`).
     """
-    def __init__(self, meta: ResponseMeta | None):
-        if meta is None:
-            self.meta = ResponseMeta(timestamp=datetime.now(tz=timezone.utc))
-        else:
+    def __init__(self, meta: ResponseMeta | None = None):
+        if isinstance(meta, ResponseMeta):
             self.meta = meta
+        elif meta is None:
+            self.meta = ResponseMeta()
+        else:
+            raise ApiResponseBuilderError(f"Invalid meta argument type: {type(meta)}")
 
     @staticmethod
-    def assert_one_of(data: object | None, error: Exception | None):
+    def assert_one_of(data: object | None, error: Exception | None) -> None:
         if data is None and isinstance(error, Exception):
             return
         elif data is not None and error is None:
@@ -152,8 +154,8 @@ class ApiPayloadBuilder(ABC):
     a `SuccessPayload` or `ErrorPayload` depending on context.
     """
     success: bool
-    data = None
-    _error = None
+    # data = None
+    # _error = None
 
     @abstractmethod
     def build_payload(self) -> Payload:
@@ -169,10 +171,14 @@ class SuccessPayloadBuilder(ApiPayloadBuilder, Generic[T]):
     """
     
     success = True
+    error = None 
     
     def __init__(self, data: T):
-        self.data = data
-        self._error = None
+        if data is not None:
+            self.data: T = data  # annotating T satisfies mypy
+        else:
+            msg = f"{self.__class__.__name__} constructor received invalid data argument: `{data}`"
+            raise ApiPayloadBuilderError(msg)
 
     def build_payload(self) -> SuccessPayload[T]:
         try:
@@ -196,10 +202,14 @@ class ErrorPayloadBuilder(ApiPayloadBuilder):
     """
     
     success = False
+    data = None
 
     def __init__(self, error: Exception):
-        self.data = None
-        self._error = error
+        if isinstance(error, Exception):
+            self.error: Exception = error
+        else:
+            msg = f"{self.__class__.__name__} constructor received invalid error argument: `{error}`"
+            raise ApiPayloadBuilderError(msg)
       
     def build_payload(self) -> ErrorPayload:
         try:
@@ -216,8 +226,8 @@ class ErrorPayloadBuilder(ApiPayloadBuilder):
 
     def _build_error_payload_data(self) -> ErrorPayloadData:
         error_payload = ErrorPayloadData(
-            type=self._error.__class__.__name__,
-            msg=str(self._error),
+            type=self.error.__class__.__name__,
+            msg=str(self.error),
         )
 
         return error_payload

@@ -58,7 +58,7 @@ class ResponseMeta(BaseModel):
 
 class ApiResponse(BaseModel):
     status: int
-    meta: Optional[ResponseMeta] = None
+    meta: ResponseMeta = Field(default_factory=lambda: ResponseMeta())
     
 class ApiSuccessResponse(ApiResponse, Generic[T]):
     payload: SuccessPayload[T]
