@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, Field
 from typing import Any, Literal, TypeVar, Optional, Generic
 
 T = TypeVar("T")
@@ -46,12 +46,12 @@ class ResponseMeta(BaseModel):
     method: Optional[str] = None
     path: Optional[str] = None
     request_id: Optional[str] = None
-    timestamp: Optional[datetime] = datetime.now(tz=timezone.utc)
+    timestamp: Optional[datetime] = Field(default_factory=lambda: datetime.now(tz=timezone.utc))
     version: Optional[str] = None
 
     @field_validator("method")
     @classmethod
-    def normalize_method(cls, v: str | None):
+    def normalize_method(cls, v: str | None) -> str | None:
         if isinstance(v, str):
             return v.upper()
         return v
