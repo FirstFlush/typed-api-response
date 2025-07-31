@@ -31,13 +31,13 @@ class ResponseMeta(BaseModel):
     responses to support observability, traceability, and extensibility.
 
     Attributes:
-        duration (Optional[float]): Total request duration in milliseconds or seconds.
-        method (Optional[str]): HTTP method (e.g., "GET", "POST"). Automatically normalized to uppercase.
-        path (Optional[str]): Request path or endpoint.
-        request_id (Optional[str]): Unique request identifier for tracing or correlation.
-        timestamp (Optional[datetime]): Time the response was generated. Defaults to current UTC time.
-        version (Optional[str]): API or schema version identifier.
-        extra (Optional[dict[str, Any]]): Arbitrary metadata extensions.
+        - duration (Optional[float]): Total request duration in milliseconds or seconds.
+        - method (Optional[str]): HTTP method (e.g., "GET", "POST"). Automatically normalized to uppercase.
+        - path (Optional[str]): Request path or endpoint.
+        - request_id (Optional[str]): Unique request identifier for tracing or correlation.
+        - timestamp (Optional[datetime]): Time the response was generated. Defaults to current UTC time.
+        - version (Optional[str]): API or schema version identifier.
+        - extra (Optional[dict[str, Any]]): Arbitrary metadata extensions.
             Use this to include custom keys such as model names, debug flags,
             client platform, or any application-specific meta fields.
     """
