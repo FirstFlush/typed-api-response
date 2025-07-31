@@ -1,6 +1,26 @@
-# FastAPI-Compatible Typed API Response Builder
+# Typed API Response Builder
 
 This library provides a type-safe, extensible, and strictly validated system for generating standardized API responses in Python. It’s designed for projects that use Pydantic, Django Ninja, FastAPI, or similar frameworks — and want to return rich, well-structured responses with full IDE support, including compatibility with Pylance strict mode.
+
+
+## 🧪 Type Safety
+
+This library is:
+- Designed for Pylance and mypy strict mode
+- Fully generic
+- Uses overloads to preserve type inference
+
+No need to type hint manually:
+
+```python
+response = build_api_response(data=MySchema(...), status=200)
+# response.payload.data is inferred as MySchema ✅
+```
+
+Want proof? [View the typecheck file](tests/typecheck/mypy_typecheck.py)
+
+> This is a static analysis file for `mypy`. It uses `reveal_type()` to confirm that generic types and payload structures are preserved correctly.  
+> You can run it with `mypy` or open it in VSCode and hover to inspect types inline — no need to execute the file.
 
 
 ## 🔧 Features
@@ -151,17 +171,3 @@ This toolkit raises:
 - `ResponseMeta` – optional metadata block
 - `Payload` / `SuccessPayload[T]` / `ErrorPayload` – structured payload schemas
 
-
-## 🧪 Type Safety
-
-This library is:
-- Designed for Pylance strict mode
-- Fully generic
-- Uses overloads to preserve type inference
-
-No need to type hint manually:
-
-```python
-response = build_api_response(data=MySchema(...), status=200)
-# response.payload.data is inferred as MySchema ✅
-```
