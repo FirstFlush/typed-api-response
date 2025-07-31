@@ -1,14 +1,18 @@
-# Typed API Response Builder
+# Typed API Response
 
-This library provides a type-safe, extensible, and strictly validated system for generating standardized API responses in Python. It’s designed for projects that use Pydantic, Django Ninja, FastAPI, or similar frameworks — and want to return rich, well-structured responses with full IDE support, including compatibility with Pylance strict mode.
+A unified, type-safe API response format for Python — with full type inference, Pydantic support, and consistent structure for both success and error responses.
+Just pass your data or exception — build_api_response() handles the rest.
+
+> Works seamlessly with FastAPI, Django Ninja, or any Pydantic-based Python project.
+> Accepts Pydantic models, dataclasses, or any structured object.
 
 
 ## 🧪 Type Safety
 
 This library is:
-- Designed for Pylance and mypy strict mode
-- Fully generic
-- Uses overloads to preserve type inference
+- Designed for **Pylance** and **mypy strict mode**
+- Fully generic — type-safe through all layers
+- Uses **overloads** to preserve type inference
 
 No need to type hint manually:
 
@@ -17,7 +21,7 @@ response = build_api_response(data=MySchema(...), status=200)
 # response.payload.data is inferred as MySchema ✅
 ```
 
-Want proof? [View the typecheck file](tests/typecheck/mypy_typecheck.py)
+➡️ Want proof? [See the typecheck file](tests/typecheck/mypy_typecheck.py)
 
 > This is a static analysis file for `mypy`. It uses `reveal_type()` to confirm that generic types and payload structures are preserved correctly.  
 > You can run it with `mypy` or open it in VSCode and hover to inspect types inline — no need to execute the file.
@@ -35,27 +39,45 @@ Want proof? [View the typecheck file](tests/typecheck/mypy_typecheck.py)
 
 ## 🚀 Getting Started
 
-### Define your Pydantic response schema:
+
+### Install with **pip**
+
+```bash
+pip install typed-api-response
+```
+
+
+### Define your Pydantic response schema
 
 ```python
 from pydantic import BaseModel
-from typing import Any
 
-class PredictionResponse(BaseModel):
-    entities: list[dict[str, Any]]
+class MyOutputSchema(BaseModel):
+    product_name: str
+    description: str
+    price: float
+    qty: int
+    on_sale: bool
 ```
 
 
-### Return a structured API response using the builder:
+### Create a typed API response:
 
 ```python
-@router.post("/foo", response_model=PredictionResponse)
+@router.post("/foo")
 def foo():
-    your_data = PredictionResponse(entities=[{"label": "RESOURCE", "value": "food"}])
-    return build_api_response(data=your_data, status=200)
+    your_data = MyOutputSchema(
+      product_name="Big Bag of Rice",
+      description="The world's greatest rice ever made. Anywhere. Ever.",
+      price=17.99,
+      qty=47328,
+      on_sale=False,
+    )
+    response = build_api_response(data=your_data, status=200)
+    # response.payload.data is inferred as MyOutputSchema ✅
 ```
 
-✅ build_api_response() accepts any Pydantic model or well-typed object and wraps it into a fully structured, metadata-rich response — with full type hint propagation and IDE support via generics.
+✅ build_api_response() accepts any Pydantic model or well-typed object (e.g. a dataclass) and wraps it into a fully structured, metadata-rich response — with full type hint propagation and IDE support via generics.
 
 
 ### Handling errors just as cleanly
@@ -107,7 +129,13 @@ def build_api_response(
   },
   "payload": {
     "success": true,
-    "data": { ... },
+    "data": {
+      "product_name": "Big Bag of Rice",
+      "description": "The world's greatest rice ever made. Anywhere. Ever.",
+      "price": 17.99,
+      "qty": 47328,
+      "on_sale": false
+    },
     "error": null
   }
 }
@@ -157,7 +185,7 @@ return build_api_response(data=result, status=200, meta=meta)
 
 ## 🛡️ Exceptions
 
-This toolkit raises:
+This package raises:
 
 - `ApiResponseBuilderError` – if payload generation fails
 - `ApiPayloadBuilderError` – if payload data is inconsistent or incomplete
@@ -171,3 +199,7 @@ This toolkit raises:
 - `ResponseMeta` – optional metadata block
 - `Payload` / `SuccessPayload[T]` / `ErrorPayload` – structured payload schemas
 
+
+## ☕ Support This Project
+
+If this saved you time or made your API cleaner, feel free to [buy me a coffee](https://www.buymeacoffee.com/firstflush). Thanks for your support 🙏
